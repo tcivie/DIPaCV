@@ -1,6 +1,9 @@
 package topology
 
-import "image"
+import (
+	"DIPaCV/pathfinding"
+	"image"
+)
 
 // Region represents a set of pixels (region of interest)
 type Region map[image.Point]bool
@@ -37,11 +40,43 @@ func IsDiscretePath(path *[]image.Point) bool {
 		visited[point] = true
 
 		if i < len(*path)-1 {
-			if !AreAdjacent(point, (*path)[i+1]) {
+			if !Are8Adjacent(point, (*path)[i+1]) {
 				return false
 			}
 		}
 	}
 
 	return true
+}
+
+// AreConnected determines if two points p and q are connected within a region of interest S.
+// Two elements p and q of a set S are considered connected if there exists a path between them
+// that consists entirely of elements belonging to the set S. The path represents the sequence
+// of adjacent pixels that connects p to q while staying within the region S.
+//
+// Parameters:
+//   - p: Starting point to check for connectivity
+//   - q: Ending point to check for connectivity
+//   - S: Region of interest (set of points) in which to find the connecting path
+//
+// Returns:
+//   - foundPath: If a path exists, returns the sequence of points forming the path from p to q
+//   - hasPath: true if p and q are connected (a valid path exists), false otherwise
+//
+// Notes:
+//   - Points p and q must both belong to region S for a path to exist
+//   - The path, if it exists, consists entirely of points from region S
+//   - The complement of S (points not in S) is considered the background region
+func AreConnected(p image.Point, q image.Point, S Region) (foundPath []image.Point, hasPath bool) {
+	if p == q && S[p] {
+		return []image.Point{p}, true
+	}
+	if !S[p] || !S[q] || len(S) == 0 {
+		return nil, false
+	}
+
+	foundPath, hasPath = pathfinding.AStar(p, q, func(p image.Point) bool {
+		return S[p]
+	})
+	return
 }

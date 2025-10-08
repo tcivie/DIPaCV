@@ -16,7 +16,7 @@ func main() {
 	}
 	defer file.Close()
 
-	im, format, err := image.Decode(file)
+	_, format, err := image.Decode(file)
 	if err != nil {
 		log.Fatal(err)
 		return

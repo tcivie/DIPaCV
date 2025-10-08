@@ -1,7 +1,7 @@
 package pathfinding
 
 import (
-	"DIPaCV/topology"
+	"DIPaCV/geometry"
 	"container/heap"
 	"image"
 	"math"
@@ -101,7 +101,7 @@ func AStar(start, goal image.Point, isValidPoint ValidPointChecker) ([]image.Poi
 }
 
 func manhattanLength(neighbor image.Point, goal image.Point) float64 {
-	return float64(topology.ManhattanLength(neighbor, goal))
+	return float64(geometry.ManhattanLength(neighbor, goal))
 }
 
 func reconstructPath(node *astarNode) []image.Point {
