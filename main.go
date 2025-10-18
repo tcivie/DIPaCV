@@ -1,26 +1,17 @@
 package main
 
 import (
-	"image"
-	"log"
-	"log/slog"
-	"os"
+	"DIPaCV/matrix"
+	"image/color"
 )
 
 func main() {
-	// Load image
-	file, err := os.Open("")
-	if err != nil {
-		log.Fatal(err)
+	im := matrix.NewSolidColorMatrix(100, 100, color.RGBA{R: 255, G: 0, B: 0, A: 255})
+
+	if im == nil {
 		return
 	}
-	defer file.Close()
 
-	_, format, err := image.Decode(file)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	slog.Info("Image loaded successfully", "format", format)
-
+	im.Add(matrix.NewSolidColorMatrix(im.Dx(), im.Dy(), color.RGBA{R: 0, G: 255, B: 0, A: 255}))
+	im.Show()
 }
