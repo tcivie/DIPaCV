@@ -14,16 +14,7 @@ import (
 
 // Convert Matrix back to image.Image
 func (m *Matrix) ToImage() *image.RGBA {
-	bounds := image.Rect(0, 0, m.Dx(), m.Dy())
-	img := image.NewRGBA(bounds)
-
-	for y := 0; y < m.Dy(); y++ {
-		for x := 0; x < m.Dx(); x++ {
-			img.SetRGBA(x, y, m.mat[y][x])
-		}
-	}
-
-	return img
+	return image.NewRGBA(m.bounds)
 }
 
 // Save matrix as image file
@@ -35,13 +26,20 @@ func (m *Matrix) SaveToFile(filename string, quality ...int) error {
 	defer file.Close()
 
 	img := m.ToImage()
+
+	// Copy matrix data to image
+	for y := m.bounds.Min.Y; y < m.bounds.Max.Y; y++ {
+		for x := m.bounds.Min.X; x < m.bounds.Max.X; x++ {
+			img.SetRGBA(x, y, m.At(x, y))
+		}
+	}
+
 	ext := strings.ToLower(filepath.Ext(filename))
 
 	switch ext {
 	case ".png":
 		return png.Encode(file, img)
 	case ".jpg", ".jpeg":
-		// Default quality is 95
 		q := 95
 		if len(quality) > 0 && quality[0] > 0 && quality[0] <= 100 {
 			q = quality[0]
@@ -52,26 +50,31 @@ func (m *Matrix) SaveToFile(filename string, quality ...int) error {
 	}
 }
 
-// Display matrix info and optionally save a preview
+// Display matrix info
 func (m *Matrix) Display() string {
-	return fmt.Sprintf("Matrix [%dx%d]", m.Dx(), m.Dy())
+	return fmt.Sprintf("Matrix [%dx%d] @ (%d,%d)",
+		m.Dx(), m.Dy(),
+		m.bounds.Min.X, m.bounds.Min.Y)
 }
 
-// Get a small preview of the matrix (for debugging)
+// Get a small preview of the matrix
 func (m *Matrix) Preview(maxSize int) string {
 	if maxSize <= 0 {
 		maxSize = 5
 	}
 
 	var preview strings.Builder
-	preview.WriteString(fmt.Sprintf("Matrix Preview [%dx%d]:\n", m.Dx(), m.Dy()))
+	preview.WriteString(m.Display() + "\n")
 
 	rowsToShow := min(m.Dy(), maxSize)
 	colsToShow := min(m.Dx(), maxSize)
 
+	startY := m.bounds.Min.Y
+	startX := m.bounds.Min.X
+
 	for y := 0; y < rowsToShow; y++ {
 		for x := 0; x < colsToShow; x++ {
-			c := m.mat[y][x]
+			c := m.At(startX+x, startY+y)
 			preview.WriteString(fmt.Sprintf("(%3d,%3d,%3d) ", c.R, c.G, c.B))
 		}
 		if m.Dx() > maxSize {
@@ -87,7 +90,6 @@ func (m *Matrix) Preview(maxSize int) string {
 	return preview.String()
 }
 
-// Helper function
 func min(a, b int) int {
 	if a < b {
 		return a
@@ -97,7 +99,6 @@ func min(a, b int) int {
 
 // Show opens the image in the system's default image viewer
 func (m *Matrix) Show() error {
-	// Create temp file
 	tmpfile, err := os.CreateTemp("", "matrix-*.png")
 	if err != nil {
 		return fmt.Errorf("failed to create temp file: %w", err)
@@ -105,27 +106,23 @@ func (m *Matrix) Show() error {
 	tmpname := tmpfile.Name()
 	tmpfile.Close()
 
-	// Save to temp file
 	if err := m.SaveToFile(tmpname); err != nil {
 		os.Remove(tmpname)
 		return fmt.Errorf("failed to save temp file: %w", err)
 	}
 
-	// Open with system default viewer
 	return openFile(tmpname)
 }
 
-// openFile opens a file with the system's default application
 func openFile(filename string) error {
 	var cmd *exec.Cmd
 
 	switch runtime.GOOS {
-	case "darwin": // macOS
+	case "darwin":
 		cmd = exec.Command("open", filename)
 	case "windows":
 		cmd = exec.Command("cmd", "/c", "start", filename)
 	case "linux":
-		// Try different commands that might be available
 		if isCommandAvailable("xdg-open") {
 			cmd = exec.Command("xdg-open", filename)
 		} else if isCommandAvailable("gnome-open") {
@@ -147,7 +144,6 @@ func openFile(filename string) error {
 	return nil
 }
 
-// Helper to check if a command exists
 func isCommandAvailable(name string) bool {
 	cmd := exec.Command("which", name)
 	if err := cmd.Run(); err != nil {
@@ -156,7 +152,6 @@ func isCommandAvailable(name string) bool {
 	return true
 }
 
-// Alternative: Show with auto-cleanup after viewing
 func (m *Matrix) ShowAndCleanup() error {
 	tmpfile, err := os.CreateTemp("", "matrix-*.png")
 	if err != nil {
@@ -165,20 +160,16 @@ func (m *Matrix) ShowAndCleanup() error {
 	tmpname := tmpfile.Name()
 	tmpfile.Close()
 
-	// Ensure cleanup happens
 	defer os.Remove(tmpname)
 
 	if err := m.SaveToFile(tmpname); err != nil {
 		return fmt.Errorf("failed to save temp file: %w", err)
 	}
 
-	// Open and wait for the process to start
 	if err := openFile(tmpname); err != nil {
 		return err
 	}
 
-	// Give the viewer time to open the file
-	// You might want to make this configurable
 	fmt.Println("Press Enter to clean up the temporary file...")
 	fmt.Scanln()
 
