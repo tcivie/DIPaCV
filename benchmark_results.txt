@@ -1,0 +1,46 @@
+goos: darwin
+goarch: arm64
+pkg: DIPaCV/matrix
+cpu: Apple M2
+BenchmarkMatrixCreation_Small-8      	 3864494	       313.2 ns/op	     784 B/op	      12 allocs/op
+BenchmarkMatrixCreation_Medium-8     	  142892	      8099 ns/op	   44352 B/op	     102 allocs/op
+BenchmarkMatrixCreation_Large-8      	    2047	    580504 ns/op	 4120662 B/op	    1002 allocs/op
+BenchmarkMatrixCreation_HD-8         	    1122	   1088048 ns/op	 8874714 B/op	    1082 allocs/op
+BenchmarkSolidColorMatrix_Small-8    	 2190718	       546.7 ns/op	     784 B/op	      12 allocs/op
+BenchmarkSolidColorMatrix_Medium-8   	   40167	     29706 ns/op	   44352 B/op	     102 allocs/op
+BenchmarkSolidColorMatrix_Large-8    	     422	   2804687 ns/op	 4120669 B/op	    1002 allocs/op
+BenchmarkAdd_Small-8                 	  967950	      1243 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd_Medium-8                	   10000	    116949 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd_Large-8                 	     417	   2866692 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd_HD-8                    	      44	  23766300 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul_Small-8                 	 1222982	       987.6 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul_Medium-8                	   13222	     91191 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul_Large-8                 	     542	   2201912 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul_HD-8                    	      64	  18261711 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDiv_Small-8                 	 1825327	       658.8 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDiv_Medium-8                	   17421	     69075 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDiv_Large-8                 	     721	   1628340 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDiv_HD-8                    	      90	  13331830 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulMat_2x2-8                	12600304	        94.98 ns/op	      64 B/op	       3 allocs/op
+BenchmarkMulMat_10x10-8              	  306496	      3913 ns/op	     720 B/op	      11 allocs/op
+BenchmarkMulMat_50x50-8              	    3094	    389526 ns/op	   11680 B/op	      51 allocs/op
+BenchmarkUnion_Small-8               	  927589	      1280 ns/op	    1408 B/op	      17 allocs/op
+BenchmarkUnion_Medium-8              	   12158	    201838 ns/op	  100160 B/op	     152 allocs/op
+BenchmarkUnion_Large-8               	     445	   2658692 ns/op	 2322505 B/op	     752 allocs/op
+BenchmarkIntersection_Small-8        	 3267502	       364.3 ns/op	     312 B/op	       7 allocs/op
+BenchmarkIntersection_Medium-8       	   58828	     20379 ns/op	   11744 B/op	      52 allocs/op
+BenchmarkIntersection_Large-8        	    2428	    505062 ns/op	  262210 B/op	     252 allocs/op
+BenchmarkGet-8                       	668994984	         1.791 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSet-8                       	587132379	         2.045 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRow_Small-8                 	1000000000	         0.5109 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRow_Medium-8                	1000000000	         0.5106 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRow_Large-8                 	1000000000	         0.5108 ns/op	       0 B/op	       0 allocs/op
+BenchmarkCol_Small-8                 	24780055	        48.22 ns/op	      48 B/op	       1 allocs/op
+BenchmarkCol_Medium-8                	 3643803	       329.5 ns/op	     416 B/op	       1 allocs/op
+BenchmarkCol_Large-8                 	  346189	      3441 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkToImage_Small-8             	12465027	       100.1 ns/op	     480 B/op	       2 allocs/op
+BenchmarkToImage_Medium-8            	  429649	      2899 ns/op	   41024 B/op	       2 allocs/op
+BenchmarkToImage_Large-8             	   20109	     57904 ns/op	 1007683 B/op	       2 allocs/op
+BenchmarkToImage_HD-8                	    6373	    188912 ns/op	 8298563 B/op	       2 allocs/op
+PASS
+ok  	DIPaCV/matrix	58.001s
